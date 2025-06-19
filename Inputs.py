@@ -1,49 +1,54 @@
-def es_letra_o_espacio(c):
-    """Devuelve True si el carácter es una letra (mayúscula o minúscula) o espacio, sino False."""
-    codigo = ord(c)
-    if (codigo >= 65 and codigo <= 90) or (codigo >= 97 and codigo <= 122) or codigo == 32:
-        return True
-    else:
-        return False
+def validar_numero(numero: str, minimo: int, maximo: int) -> bool:
+    """
+    Valida si el número ingresado es un entero dentro del rango especificado.
+    """
+    if numero.isdigit():
+        valor = int(numero)
+        return minimo <= valor <= maximo
+    return False
 
-def es_nombre_valido(nombre):
-    """Valida que el nombre tenga al menos 3 caracteres y solo letras o espacios."""
-    if len(nombre) < 3:
-        return False
-    for caracter in nombre:
-        if not es_letra_o_espacio(caracter):
-            return False
-    return True
+def validar_nombre(nombre: str) -> bool:
+    """
+    Valida si el nombre tiene al menos 3 caracteres y solo contiene letras y espacios.
+    """
+    nombre_sin_espacios = nombre.replace(" ", "")
+    return len(nombre) >= 3 and nombre_sin_espacios.isalpha()
 
-def get_nombre_participante(mensaje, mensaje_error):
-    """Pide un nombre y lo valida según los criterios."""
-    while True:
+
+
+def pedir_entero(mensaje: str, mensaje_error: str, minimo: int, maximo: int, reintentos: int) -> int | None:
+    """
+    Solicita al usuario un número entero dentro de un rango, con intentos limitados.
+    """
+    contador = 1
+    resultado = None
+    while contador <= reintentos:
+        entrada = input(mensaje)
+        if validar_nombre(entrada, minimo, maximo):
+            resultado = int(entrada)
+            break
+        else:
+            print(f"{mensaje_error} * Intentos restantes: {reintentos - contador} * \n")
+            contador += 1
+    return resultado
+
+
+def obtener_nombre_participante(mensaje: str, error_msg: str, reintentos: int) -> str | None:
+    """
+    Solicita al usuario ingresar un nombre válido (al menos 3 letras, solo letras y espacios),
+    con cantidad limitada de intentos.
+    """
+    contador = 1
+    nombre_valido = None
+
+    while contador <= reintentos:
         nombre = input(mensaje).strip()
-        if es_nombre_valido(nombre):
-            return nombre
+        if validar_nombre(nombre):
+            nombre_valido = nombre
+            break
         else:
-            print(mensaje_error)
+            print(f"{error_msg} * Intentos restantes: {reintentos - contador} * \n")
+            contador += 1
 
-def pedir_entero_entre(mensaje, minimo, maximo):
-    """Pide un entero entre minimo y maximo (inclusive) y valida el ingreso."""
-    while True:
-        valor = input(mensaje)
-
-        solo_digitos = True
-        for c in valor:
-            if ord(c) < 48 or ord(c) > 57:
-                solo_digitos = False
-                break
-        if not solo_digitos:
-            print(f"Error: debe ingresar un número entero entre {minimo} y {maximo}.")
-            continue
-
-        numero = 0
-        for c in valor:
-            numero = numero * 10 + (ord(c) - 48)  
-        if numero >= minimo and numero <= maximo:
-            return numero
-        else:
-            print(f"Error: debe ingresar un número entero entre {minimo} y {maximo}.")
-
+    return nombre_valido
 
