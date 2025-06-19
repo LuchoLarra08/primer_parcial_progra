@@ -1,88 +1,111 @@
-from Funciones import cargar_puntuaciones, cargar_participantes, mostrar_puntuaciones,  mostrar_mayores_a_4, mostrar_promedios_mayores_a_7, mostrar_promedio_por_jurado, jurado_mas_estricto, buscar_participante, top_3_participantes
+import Funciones
 
-participantes = [[""] * 4 for _ in range(5)]
-
-participantes_cargados = False
-puntuaciones_cargadas = False  #bandera puntuaciones
-
-while True:
-    print("\n--- MENÚ ---")
+def mostrar_menu():
+    """
+    Muestra las opciones disponibles del menú.
+    """
+    print("\n--- Menú de opciones ---")
     print("1. Cargar participantes")
     print("2. Cargar puntuaciones")
     print("3. Mostrar puntuaciones")
-    print("4. Participantes con promedio mayor a 4")    
-    print("5. Participantes con promedio mayor a 7")
+    print("4. Mostrar participantes con promedio mayor a 4")
+    print("5. Mostrar participantes con promedio mayor a 7")
     print("6. Mostrar promedio de cada jurado")
     print("7. Mostrar jurado más estricto")
     print("8. Buscar participante por nombre")
-    print("9. Top 3 participantes con mayor puntaje promedio")
-    print("0. Salir")
+    print("9. Mostrar top 3 participantes")
+    print("10. Mostrar participantes ordenados alfabéticamente")
+    print("11. Mostrar ganador")
+    print("12. Salir")
 
-    opcion = input("Ingrese una opción: ")
+def main():
+    participantes = [["" , 0, 0, 0] for _ in range(5)]  
+    cargados_nombres = False
+    cargados_puntajes = False
 
-    if opcion == "1":
-        cargar_participantes(participantes)
-        participantes_cargados = True
-        puntuaciones_cargadas = False  
-        print("Participantes cargados correctamente.")
-        for fila in participantes:
-            print(fila)
+    while True:
+        mostrar_menu()
+        opcion = input("Seleccione una opción: ").strip()
 
-    elif opcion == "2":
-        if participantes_cargados:
-            cargar_puntuaciones(participantes)
-            puntuaciones_cargadas = True
-            print("Puntuaciones cargadas correctamente.")
+        if opcion == "1":
+            Funciones.cargar_participantes(participantes)
+            if all(p[0] != "" for p in participantes):
+                cargados_nombres = True
+                cargados_puntajes = False
+            else:
+                print("La carga de participantes no se completó correctamente.")
+
+        elif opcion == "2":
+            if not cargados_nombres:
+                print("Debe cargar primero los participantes.")
+            else:
+                Funciones.cargar_puntuaciones(participantes)
+                if all(all(isinstance(p, int) and p > 0 for p in participante[1:]) for participante in participantes):
+                    cargados_puntajes = True
+                else:
+                    print("La carga de puntuaciones no se completó correctamente.")
+
+        elif opcion == "3":
+            if not cargados_nombres or not cargados_puntajes:
+                print("Debe cargar participantes y puntuaciones primero.")
+            else:
+                Funciones.mostrar_puntuaciones(participantes)
+
+        elif opcion == "4":
+            if not cargados_nombres or not cargados_puntajes:
+                print("Debe cargar participantes y puntuaciones primero.")
+            else:
+                Funciones.mostrar_promedio_mayor_que(participantes, 4)
+
+        elif opcion == "5":
+            if not cargados_nombres or not cargados_puntajes:
+                print("Debe cargar participantes y puntuaciones primero.")
+            else:
+                Funciones.mostrar_promedio_mayor_que(participantes, 7)
+
+        elif opcion == "6":
+            if not cargados_nombres or not cargados_puntajes:
+                print("Debe cargar participantes y puntuaciones primero.")
+            else:
+                Funciones.promedio_por_jurado(participantes)
+
+        elif opcion == "7":
+            if not cargados_nombres or not cargados_puntajes:
+                print("Debe cargar participantes y puntuaciones primero.")
+            else:
+                Funciones.jurado_mas_estricto(participantes)
+
+        elif opcion == "8":
+            if not cargados_nombres or not cargados_puntajes:
+                print("Debe cargar participantes y puntuaciones primero.")
+            else:
+                Funciones.buscar_participante(participantes)
+
+        elif opcion == "9":
+            if not cargados_nombres or not cargados_puntajes:
+                print("Debe cargar participantes y puntuaciones primero.")
+            else:
+                Funciones.top_3_participantes(participantes)
+
+        elif opcion == "10":
+            if not cargados_nombres or not cargados_puntajes:
+                print("Debe cargar participantes y puntuaciones primero.")
+            else:
+                Funciones.ordenar_participantes_alfabeticamente(participantes)
+
+        elif opcion == "11":
+            if not cargados_nombres or not cargados_puntajes:
+                print("Debe cargar participantes y puntuaciones primero.")
+            else:
+                Funciones.mostrar_ganador(participantes)
+
+        elif opcion == "12":
+            print("Saliendo...")
+            break
+
         else:
-            print("Primero debe cargar los nombres de los participantes.")
+            print("Opción no válida. Intente nuevamente.")
 
-    elif opcion == "3":
-        if participantes_cargados and puntuaciones_cargadas:
-            mostrar_puntuaciones(participantes)
-        else:
-            print("Debe cargar participantes y puntuaciones antes de mostrar.")
-
-    elif opcion == "4":
-        if participantes_cargados and puntuaciones_cargadas:
-            mostrar_mayores_a_4(participantes)
-        else:
-            print("Debe cargar participantes y puntuaciones antes de continuar.")
-
-    elif opcion == "5":
-        if participantes_cargados and puntuaciones_cargadas:
-            mostrar_promedios_mayores_a_7(participantes)
-        else:
-            print("Primero debe cargar los participantes y sus puntuaciones.")
-
-    elif opcion == "6":
-        if participantes_cargados and puntuaciones_cargadas:
-            mostrar_promedio_por_jurado(participantes)
-        else:
-            print("Primero debe cargar los participantes y sus puntuaciones.")
-
-    elif opcion == "7":
-        if participantes_cargados and puntuaciones_cargadas:
-            jurado_mas_estricto(participantes)
-        else:
-            print("Primero debe cargar los participantes y sus puntuaciones.")
-
-    elif opcion == "8":
-        if participantes_cargados and puntuaciones_cargadas:
-            buscar_participante(participantes)
-        else:
-            print("Primero debe cargar los participantes y sus puntuaciones.")
-
-    elif opcion == "9":
-        if participantes_cargados and puntuaciones_cargadas:
-            top_3_participantes(participantes)
-        else:
-            print("Primero debe cargar los participantes y sus puntuaciones.")
-
-
-    elif opcion == "0":
-        print("Gracias por usar el sistema.")
-        break
-
-    else:
-        print("Opción inválida. Intente de nuevo.")
+if __name__ == "__main__":
+    main()
 
